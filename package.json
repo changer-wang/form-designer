@@ -1,6 +1,6 @@
 {
-    "name": "@form-create/designer",
-    "version": "3.2.8",
+    "name": "@wang-form-create/designer",
+    "version": "3.2.9",
     "description": "好用的Vue低代码可视化表单设计器，可以通过拖拽的方式快速创建表单，提高开发者对表单的开发效率。",
     "unpkg": "./dist/index.umd.js",
     "jsdelivr": "./dist/index.umd.js",
@@ -51,7 +51,7 @@
         "dist",
         "locale"
     ],
-    "author": "xaboy",
+    "author": "wangsc",
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/xaboy/form-create-designer/issues"
@@ -80,9 +80,6 @@
         "@form-create/component-wangeditor": "^3.1",
         "@form-create/element-ui": "^3.1.27",
         "@form-create/utils": "^3.2.0",
-        "codemirror": "^6.65.7",
-        "element-plus": "^2.8.4",
-        "vuedraggable": "4.1.0",
         "@sixian/css-url": "^1.0.3",
         "@types/chalk": "^2.2.0",
         "@types/shelljs": "^0.8.9",
@@ -94,11 +91,13 @@
         "@vue/compiler-sfc": "^3.0.11",
         "babel-eslint": "^10.1.0",
         "chalk": "^4.1.2",
+        "codemirror": "^6.65.7",
         "commander": "^6.0.0",
         "cross-env": "^7.0.2",
         "css-loader": "^4.2.1",
         "cssnano": "^5.1.13",
         "cssnano-preset-advanced": "^5.3.8",
+        "element-plus": "^2.8.4",
         "eslint": "^7.7.0",
         "eslint-plugin-vue": "^6.2.2",
         "esno": "^0.9.1",
@@ -127,6 +126,7 @@
         "vue": "^3.1.5",
         "vue-loader": "^15.9.3",
         "vue-style-loader": "^4.1.2",
-        "vue-template-compiler": "^2.6.11"
+        "vue-template-compiler": "^2.6.11",
+        "vuedraggable": "4.1.0"
     }
 }
