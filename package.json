@@ -73,17 +73,6 @@
         "rimraf": "^3.0.2",
         "vite": "^3.1.4"
     },
-    "husky": {
-        "hooks": {
-            "pre-commit": "lint-staged"
-        }
-    },
-    "lint-staged": {
-        "*.{js,jsx,vue}": [
-            "eslint --fix",
-            "git add"
-        ]
-    },
     "peerDependencies": {
         "vue": "^3.1.5"
     },

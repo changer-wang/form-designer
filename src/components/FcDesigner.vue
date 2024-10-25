@@ -485,7 +485,7 @@ export default defineComponent({
                 id: null,
                 field: null,
                 symbol: null,
-                invert: false,
+                invert: true,
                 currentRule: {}
             },
             isShowRelateDialog: false,
@@ -792,7 +792,7 @@ export default defineComponent({
                 methods.setFormData(myData)
             },
             selectChange() {
-                const currentRule = methods.findRuleById(data.relateForm.id)
+                const currentRule = methods.findRuleById(data.relateForm.id) || {}
                 data.relateForm.currentRule = currentRule
             },
             openRelateDialog() {
