@@ -212,12 +212,11 @@
                             <el-divider v-if="baseForm.isShow">{{ t('designer.rule') }}</el-divider>
                             <DragForm v-show="baseForm.isShow" v-model:api="baseForm.api" :rule="baseForm.rule"
                                 :option="baseForm.options" :modelValue="baseForm.value" @change="baseChange"></DragForm>
-                            <el-row>
+                            <el-row style="margin: 10px 0;">
                                 <el-col :span="24">
                                     <el-button @click="openRelateDialog" type="primary" style="width: 100%;" size="small">{{ t('custom.relete') }}</el-button>
                                 </el-col>
                             </el-row>
-                            <!-- <el-button @click="aa">hello world</el-button> -->
                             <el-divider v-if="propsForm.isShow">{{ t('designer.props') }}</el-divider>
                             <DragForm v-show="propsForm.isShow" v-model:api="propsForm.api" :rule="propsForm.rule"
                                 :option="propsForm.options" :modelValue="propsForm.value" @change="propChange"
@@ -572,7 +571,7 @@ export default defineComponent({
                 key: '',
             },
             dragForm: ref({
-                rule: [],
+                rule: [{"type":"tableForm","field":"Fwr8m2ubogykabc","title":"表格表单","info":"","props":{"columns":[{"label":"name","style":{"width":"auto"},"rule":[{"type":"input","field":"Fskvm2smlmq9amc","title":"输入框","info":"","$required":false,"_fc_id":"id_Fgerm2smlmq9anc","name":"ref_Fzzjm2smlmq9aoc","display":true,"hidden":false,"_fc_drag_tag":"input"}]},{"label":"age","style":{"width":"auto"},"rule":[{"type":"input","field":"Fzqzm2smni38arc","title":"输入框","info":"","$required":false,"_fc_id":"id_Fk8im2smni38asc","name":"ref_Flmom2smni38atc","display":true,"hidden":false,"_fc_drag_tag":"input"}]}]},"_fc_id":"id_Fb0cm2ubogykacc","name":"ref_Fpa2m2ubogykadc","display":true,"hidden":false,"_fc_drag_tag":"tableForm"}],
                 api: {},
             }),
             formOptions: {},
@@ -769,28 +768,6 @@ export default defineComponent({
         });
 
         const methods = {
-            aa() {
-                const myData = {
-                    "Falnm2lb3n87anc": [
-                        {
-                            "F9i8m2lb6wm2b6c": "1",
-                            "F92gm2lb70e4b9c": "1",
-                            "Fjjem2lb75jabcc": "1"
-                        },
-                        {
-                            "F9i8m2lb6wm2b6c": "2",
-                            "F92gm2lb70e4b9c": "2",
-                            "Fjjem2lb75jabcc": "2"
-                        },
-                        {
-                            "F9i8m2lb6wm2b6c": "3",
-                            "F92gm2lb70e4b9c": "3",
-                            "Fjjem2lb75jabcc": "3"
-                        }
-                    ]
-                }
-                methods.setFormData(myData)
-            },
             selectChange() {
                 const currentRule = methods.findRuleById(data.relateForm.id) || {}
                 data.relateForm.currentRule = currentRule
@@ -1083,6 +1060,7 @@ export default defineComponent({
                     rules = [];
                 }
                 data.children = ref(methods.loadRule(is.String(rules) ? designerForm.parseJson(rules) : deepCopy(rules)));
+                console.log('🚀 ~ setRule ~  data.children:',  data.children, methods.makeDragRule(methods.makeChildren(data.children)))
                 methods.clearActiveRule();
                 data.dragForm.rule = methods.makeDragRule(methods.makeChildren(data.children));
                 methods.updateTree();
