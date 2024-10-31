@@ -274,23 +274,23 @@
                 </el-dialog>
                 <el-dialog v-model="isShowRelateDialog" :title="t('custom.relete')" width="800px" append-to-body>
                     <div class="_fd-comp-title">设置条件</div>
-                    <el-row :gutter="20">
-                        <el-col :span="10">
+                    <el-row class="relate-row" :gutter="20" v-for="(relateFormItem, index) in relateFormArr" :key="index">
+                        <el-col :span="8">
                             <el-tree-select
-                                v-model="relateForm.id"
+                                v-model="relateFormItem.id"
                                 :data="treeInfo"
                                 value-key="id"
                                 :props="{ label: (data) => data.rule.title }"
                                 show-checkbox
                                 check-strictly
                                 :render-after-expand="false"
-                                @change="selectChange"
+                                @change="selectChange(relateFormItem)"
                             ></el-tree-select>
                         </el-col>
-                        <el-col :span="6" v-if="relateForm.id">
+                        <el-col :span="6" v-if="relateFormItem.id">
                             <el-select
                                 v-if="['inputNumber', 'rate']"
-                                v-model="relateForm.symbol">
+                                v-model="relateFormItem.symbol">
                                 <el-option
                                     v-for="item in numberOptions"
                                     :key="item.value"
@@ -309,29 +309,36 @@
                                 />                                
                             </el-select>
                         </el-col>
-                        <el-col v-if="relateForm.id" :span="8">
+                        <el-col v-if="relateFormItem.id" :span="6">
                             <el-input-number
-                                v-model="relateForm.value"
-                                v-if="['inputNumber', 'rate'].includes(relateForm.currentRule.type)"></el-input-number>
+                                v-model="relateFormItem.value"
+                                v-if="['inputNumber', 'rate'].includes(relateFormItem.currentRule.type)"></el-input-number>
                             <el-switch
-                                v-model="relateForm.value"
-                                v-else-if="relateForm.currentRule.type === 'switch'" />
+                                v-model="relateFormItem.value"
+                                v-else-if="relateFormItem.currentRule.type === 'switch'" />
                             <el-input
-                                v-model="relateForm.value"
+                                v-model="relateFormItem.value"
                                 v-else></el-input>
                         </el-col>
+                        <el-col :span="4">
+                            <el-button type="danger" circle @click="deleteConditions(index)"><i class="fc-icon icon-delete"></i></el-button>
+                        </el-col>
                     </el-row>
+                    <el-button @click="addConditions">添加条件</el-button>
+                    <div class="_fd-comp-title" style="margin-top: 30px;">条件规则</div>
+                    <el-radio-group v-model="relateMode">
+                        <el-radio value="AND" size="large">AND</el-radio>
+                        <el-radio value="OR" size="large">OR</el-radio>
+                    </el-radio-group>
                     <div class="_fd-comp-title" style="margin-top: 30px;">条件成立后组件状态</div>
-                    <el-radio-group v-model="relateForm.invert">
+                    <el-radio-group v-model="relateInvert">
                         <el-radio :value="true" size="large">显示</el-radio>
                         <el-radio :value="false" size="large">隐藏</el-radio>
                     </el-radio-group>
                     <template #footer>
                     <div class="dialog-footer">
-                        <el-button @click="isShowRelateDialog = false">Cancel</el-button>
-                        <el-button type="primary" @click="handleRelateDialog">
-                            Confirm
-                        </el-button>
+                        <el-button @click="isShowRelateDialog = false">取消</el-button>
+                        <el-button type="primary" @click="handleRelateDialog">确定</el-button>
                     </div>
                     </template>
                 </el-dialog>
@@ -391,6 +398,7 @@ import xml from '../utils/highlight/xml.min';
 import javascript from '../utils/highlight/javascript.min';
 import TypeSelect from './TypeSelect.vue';
 import mergeProps from '@form-create/utils/lib/mergeprops';
+import group from '../config/rule/group';
 
 hljs.registerLanguage('javascript', javascript);
 hljs.registerLanguage('xml', xml);
@@ -402,7 +410,7 @@ export default defineComponent({
         fcDraggable,
         DragForm: designerForm.$form(),
         ViewForm: viewForm.$form(),
-        EventConfig,
+        EventConfig
     },
     props: {
         menu: Array,
@@ -484,9 +492,18 @@ export default defineComponent({
                 id: null,
                 field: null,
                 symbol: null,
-                invert: true,
                 currentRule: {}
             },
+            relateFormArr: [
+                {
+                    id: null,
+                    field: null,
+                    symbol: null,
+                    currentRule: {}
+                }
+            ],
+            relateInvert: true,
+            relateMode: 'OR',
             isShowRelateDialog: false,
             treeSelectProps: {
                 label: (data) => { return data.rule.title }
@@ -768,49 +785,74 @@ export default defineComponent({
         });
 
         const methods = {
-            selectChange() {
-                const currentRule = methods.findRuleById(data.relateForm.id) || {}
-                data.relateForm.currentRule = currentRule
+            selectChange(relateForm) {
+                const currentRule = methods.findRuleById(relateForm.id) || {}
+                relateForm.currentRule = currentRule
             },
             openRelateDialog() {
                 data.isShowRelateDialog = true
                 if (JSON.stringify(data.activeRule._computed) !== "{}") {
                     const computedData = data.activeRule._computed.hidden
-                    const item = methods.findItemByRule(computedData.group[0].field)
-                    data.relateForm = {
-                        id: item.id,
-                        field: computedData.group[0].field,
-                        symbol: computedData.group[0].condition,
-                        invert: computedData.invert,
-                        value: computedData.group[0].value,
-                        currentRule: item.rule
-                    }
-                }
-            },
-            handleRelateDialog() {
-                if (data.relateForm.id && data.relateForm.symbol && data.relateForm.value) {
-                    const computed = {
-                        hidden: {
-                            mode: 'AND',
-                            group: [
-                                {
-                                    field: data.relateForm.currentRule.field,
-                                    condition: data.relateForm.symbol,
-                                    value: data.relateForm.value,
-                                }
-                            ],
-                            invert: data.relateForm.invert
+                    const group = data.activeRule._computed.hidden.group
+                    data.relateMode = data.activeRule._computed.hidden.mode
+                    data.relateInvert = data.activeRule._computed.hidden.invert
+                    group.forEach((groupItem, index) => {
+                        const item = methods.findItemByRule(groupItem.field)
+                        data.relateFormArr[index] = {
+                            id: item.id,
+                            field: groupItem.field,
+                            symbol: groupItem.condition,
+                            value: groupItem.value,
+                            currentRule: item.rule
                         }
-                    }
-                    data.activeRule['_computed'] = computed
+                    })
+                } else {
                     data.relateForm = {
                         id: null,
                         field: null,
                         symbol: null,
-                        invert: false,
                         currentRule: {}
                     }
+                    data.relateFormArr = [deepCopy(data.relateForm)]
+                    data.relateMode = 'OR'
+                    data.relateInvert = true
                 }
+            },
+            addConditions() {
+                const relateForm = {
+                    id: null,
+                    field: null,
+                    symbol: null,
+                    currentRule: {}
+                }
+                data.relateFormArr.push(relateForm)
+            },
+            deleteConditions(index) {
+                if (data.relateFormArr.length <= 1) return
+                data.relateFormArr.splice(index, 1)
+            },
+            handleRelateDialog() {
+                const computed = {
+                    hidden: {
+                        mode: data.relateMode,
+                        group: [],
+                        invert: data.relateInvert
+                    }
+                }
+                console.log(data.relateFormArr)
+                for (let index = 0; index < data.relateFormArr.length; index++) {
+                    const relateForm = data.relateFormArr[index];
+                    if (relateForm.id && relateForm.symbol && relateForm.value) {
+                        const relateItem = {
+                            field: relateForm.currentRule.field,
+                            condition: relateForm.symbol,
+                            value: relateForm.value
+                        }
+                        computed.hidden.group.push(relateItem)
+                    }
+                }
+                data.relateFormArr = [deepCopy(data.relateForm)]
+                data.activeRule['_computed'] = computed
                 data.isShowRelateDialog = false
             },
             findRuleById(id) {
@@ -2088,5 +2130,8 @@ export default defineComponent({
     position: absolute;
     top: 3px;
     left: -5px;
+}
+.relate-row {
+    margin-bottom: 20px;
 }
 </style>
