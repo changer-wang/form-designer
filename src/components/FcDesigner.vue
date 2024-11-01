@@ -289,7 +289,7 @@
                         </el-col>
                         <el-col :span="6" v-if="relateFormItem.id">
                             <el-select
-                                v-if="['inputNumber', 'rate']"
+                                v-if="['inputNumber', 'rate'].includes(relateFormItem.currentRule.type)"
                                 v-model="relateFormItem.symbol">
                                 <el-option
                                     v-for="item in numberOptions"
