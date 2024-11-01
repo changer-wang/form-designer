@@ -274,7 +274,7 @@
                 </el-dialog>
                 <el-dialog v-model="isShowRelateDialog" :title="t('custom.relete')" width="800px" append-to-body>
                     <div class="_fd-comp-title">设置条件</div>
-                    <el-row class="relate-row" :gutter="20" v-for="(relateFormItem, index) in relateFormArr" :key="index">
+                    <el-row class="relate-row" :gutter="20" v-for="(relateFormItem, index) in relateFormArr">
                         <el-col :span="8">
                             <el-tree-select
                                 v-model="relateFormItem.id"
@@ -284,7 +284,7 @@
                                 show-checkbox
                                 check-strictly
                                 :render-after-expand="false"
-                                @change="selectChange(relateFormItem)"
+                                @change="() => { selectChange(index) }"
                             ></el-tree-select>
                         </el-col>
                         <el-col :span="6" v-if="relateFormItem.id">
@@ -300,7 +300,7 @@
                             </el-select>
                             <el-select
                                 v-else
-                                v-model="relateForm.symbol">
+                                v-model="relateFormItem.symbol">
                                 <el-option
                                     v-for="item in relateOptions"
                                     :key="item.value"
@@ -785,14 +785,14 @@ export default defineComponent({
         });
 
         const methods = {
-            selectChange(relateForm) {
-                const currentRule = methods.findRuleById(relateForm.id) || {}
-                relateForm.currentRule = currentRule
+            selectChange(index) {
+                const relateFormItem = data.relateFormArr[index]
+                const currentRule = methods.findRuleById(relateFormItem.id) || {}
+                relateFormItem.currentRule = currentRule    
             },
             openRelateDialog() {
                 data.isShowRelateDialog = true
                 if (JSON.stringify(data.activeRule._computed) !== "{}") {
-                    const computedData = data.activeRule._computed.hidden
                     const group = data.activeRule._computed.hidden.group
                     data.relateMode = data.activeRule._computed.hidden.mode
                     data.relateInvert = data.activeRule._computed.hidden.invert
@@ -807,13 +807,12 @@ export default defineComponent({
                         }
                     })
                 } else {
-                    data.relateForm = {
+                    data.relateFormArr = [{
                         id: null,
                         field: null,
                         symbol: null,
                         currentRule: {}
-                    }
-                    data.relateFormArr = [deepCopy(data.relateForm)]
+                    }]
                     data.relateMode = 'OR'
                     data.relateInvert = true
                 }
@@ -839,7 +838,6 @@ export default defineComponent({
                         invert: data.relateInvert
                     }
                 }
-                console.log(data.relateFormArr)
                 for (let index = 0; index < data.relateFormArr.length; index++) {
                     const relateForm = data.relateFormArr[index];
                     if (relateForm.id && relateForm.symbol && relateForm.value) {
@@ -851,9 +849,14 @@ export default defineComponent({
                         computed.hidden.group.push(relateItem)
                     }
                 }
-                data.relateFormArr = [deepCopy(data.relateForm)]
                 data.activeRule['_computed'] = computed
                 data.isShowRelateDialog = false
+                data.relateFormArr = [{
+                    id: null,
+                    field: null,
+                    symbol: null,
+                    currentRule: {}
+                }]
             },
             findRuleById(id) {
                 let rule = undefined;
@@ -1102,7 +1105,6 @@ export default defineComponent({
                     rules = [];
                 }
                 data.children = ref(methods.loadRule(is.String(rules) ? designerForm.parseJson(rules) : deepCopy(rules)));
-                console.log('🚀 ~ setRule ~  data.children:',  data.children, methods.makeDragRule(methods.makeChildren(data.children)))
                 methods.clearActiveRule();
                 data.dragForm.rule = methods.makeDragRule(methods.makeChildren(data.children));
                 methods.updateTree();
