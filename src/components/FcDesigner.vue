@@ -281,8 +281,7 @@
                                 :data="treeInfo"
                                 value-key="id"
                                 :props="{ label: (data) => data.rule.title }"
-                                show-checkbox
-                                check-strictly
+                                @node-click="(data, node, relateFormItem) => handleNodeClick(node, index)"
                                 :render-after-expand="false"
                                 @change="() => { selectChange(index) }"
                             ></el-tree-select>
@@ -785,6 +784,18 @@ export default defineComponent({
         });
 
         const methods = {
+            handleNodeClick(node, index) {
+                let currentNode = node;
+                const parentChain = [node.data.rule.field]
+                while (currentNode.parent) {
+                    if (currentNode.parent.data && currentNode.parent.data.rule) {
+                        parentChain.unshift(currentNode.parent.data.rule.field);
+                    }
+                    currentNode = currentNode.parent;
+                }
+                const relateFormItem = data.relateFormArr[index];
+                relateFormItem.fieldChain = parentChain.join('.');
+            },
             selectChange(index) {
                 const relateFormItem = data.relateFormArr[index]
                 const currentRule = methods.findRuleById(relateFormItem.id) || {}
@@ -797,7 +808,8 @@ export default defineComponent({
                     data.relateMode = data.activeRule._computed.hidden.mode
                     data.relateInvert = data.activeRule._computed.hidden.invert
                     group.forEach((groupItem, index) => {
-                        const item = methods.findItemByRule(groupItem.field)
+                        const field = groupItem.field.split('.')[0]
+                        const item = methods.findItemByRule(field)
                         data.relateFormArr[index] = {
                             id: item.id,
                             field: groupItem.field,
@@ -817,19 +829,6 @@ export default defineComponent({
                     data.relateInvert = true
                 }
             },
-            addConditions() {
-                const relateForm = {
-                    id: null,
-                    field: null,
-                    symbol: null,
-                    currentRule: {}
-                }
-                data.relateFormArr.push(relateForm)
-            },
-            deleteConditions(index) {
-                if (data.relateFormArr.length <= 1) return
-                data.relateFormArr.splice(index, 1)
-            },
             handleRelateDialog() {
                 const computed = {
                     hidden: {
@@ -842,7 +841,7 @@ export default defineComponent({
                     const relateForm = data.relateFormArr[index];
                     if (relateForm.id && relateForm.symbol && relateForm.value) {
                         const relateItem = {
-                            field: relateForm.currentRule.field,
+                            field: relateForm.fieldChain,
                             condition: relateForm.symbol,
                             value: relateForm.value
                         }
@@ -857,6 +856,19 @@ export default defineComponent({
                     symbol: null,
                     currentRule: {}
                 }]
+            },
+            addConditions() {
+                const relateForm = {
+                    id: null,
+                    field: null,
+                    symbol: null,
+                    currentRule: {}
+                }
+                data.relateFormArr.push(relateForm)
+            },
+            deleteConditions(index) {
+                if (data.relateFormArr.length <= 1) return
+                data.relateFormArr.splice(index, 1)
             },
             findRuleById(id) {
                 let rule = undefined;
