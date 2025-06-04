@@ -1,7 +1,11 @@
 const ZhCn = {
     name: 'zh-cn',
     custom: {
-        relete: '关联设置'
+        relete: '关联设置',
+        setConditions: '设置条件',
+        addConditions: '添加条件',
+        rule: '规则',
+        componentStatus: '条件成立后组件状态'
     },
     form: {
         field: '字段 ID',

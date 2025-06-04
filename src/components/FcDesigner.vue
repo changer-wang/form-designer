@@ -273,7 +273,7 @@
                     <pre class="_fd-preview-code" ref="previewCode" v-else><code v-html="preview.html"></code></pre>
                 </el-dialog>
                 <el-dialog v-model="isShowRelateDialog" :title="t('custom.relete')" width="800px" append-to-body>
-                    <div class="_fd-comp-title">设置条件</div>
+                    <div class="_fd-comp-title">{{ t('custom.setConditions') }}</div>
                     <el-row class="relate-row" :gutter="20" v-for="(relateFormItem, index) in relateFormArr">
                         <el-col :span="8">
                             <el-tree-select
@@ -323,21 +323,21 @@
                             <el-button type="danger" circle @click="deleteConditions(index)"><i class="fc-icon icon-delete"></i></el-button>
                         </el-col>
                     </el-row>
-                    <el-button @click="addConditions">添加条件</el-button>
-                    <div class="_fd-comp-title" style="margin-top: 30px;">条件规则</div>
+                    <el-button @click="addConditions">{{ t('custom.addConditions') }}</el-button>
+                    <div class="_fd-comp-title" style="margin-top: 30px;">{{ t('custom.rule') }}</div>
                     <el-radio-group v-model="relateMode">
                         <el-radio value="AND" size="large">AND</el-radio>
                         <el-radio value="OR" size="large">OR</el-radio>
                     </el-radio-group>
-                    <div class="_fd-comp-title" style="margin-top: 30px;">条件成立后组件状态</div>
+                    <div class="_fd-comp-title" style="margin-top: 30px;">{{ t('custom.componentStatus') }}</div>
                     <el-radio-group v-model="relateInvert">
-                        <el-radio :value="true" size="large">显示</el-radio>
-                        <el-radio :value="false" size="large">隐藏</el-radio>
+                        <el-radio :value="true" size="large">{{ t('props.show')  }}</el-radio>
+                        <el-radio :value="false" size="large">{{ t('props.hide') }}</el-radio>
                     </el-radio-group>
                     <template #footer>
                     <div class="dialog-footer">
-                        <el-button @click="isShowRelateDialog = false">取消</el-button>
-                        <el-button type="primary" @click="handleRelateDialog">确定</el-button>
+                        <el-button @click="isShowRelateDialog = false">{{ t('props.cancel') }}</el-button>
+                        <el-button type="primary" @click="handleRelateDialog">{{ t('props.ok') }}</el-button>
                     </div>
                     </template>
                 </el-dialog>
@@ -808,7 +808,7 @@ export default defineComponent({
                     data.relateMode = data.activeRule._computed.hidden.mode
                     data.relateInvert = data.activeRule._computed.hidden.invert
                     group.forEach((groupItem, index) => {
-                        const field = groupItem.field.split('.')[0]
+                        const field = groupItem.field.split('.').at(-1)
                         const item = methods.findItemByRule(field)
                         data.relateFormArr[index] = {
                             id: item.id,
@@ -841,7 +841,7 @@ export default defineComponent({
                     const relateForm = data.relateFormArr[index];
                     if (relateForm.id && relateForm.symbol && relateForm.value) {
                         const relateItem = {
-                            field: relateForm.fieldChain,
+                            field: relateForm.fieldChain || relateForm.field,
                             condition: relateForm.symbol,
                             value: relateForm.value
                         }

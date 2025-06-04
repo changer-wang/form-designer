@@ -1,7 +1,11 @@
 const En = {
     name: 'en',
     custom: {
-        relete: 'Relete Setting'
+        relete: 'Relete Setting',
+        setConditions: 'Set Conditions',
+        addConditions: 'Add Conditions',
+        rule: 'Rule',
+        componentStatus: 'Component Status After Condition is Met'
     },
     form: {
         field: 'Field',
