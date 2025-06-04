@@ -26,6 +26,6 @@ module.exports = {
         }
     },
     devServer: {
-        port: 5004
+        port: 5005
     }
 }

@@ -37,6 +37,7 @@ build/Release
 node_modules/
 jspm_packages/
 .DS_Store
+dist
 
 # TypeScript v1 declaration files
 typings/
@@ -66,4 +67,4 @@ typings/
 # custom
 yarn.lock
 /index.html
-packages/*/locale
+/locale
