@@ -785,6 +785,7 @@ export default defineComponent({
 
         const methods = {
             handleNodeClick(node, index) {
+                if (!node.isLeaf) return
                 let currentNode = node;
                 const parentChain = [node.data.rule.field]
                 while (currentNode.parent) {
