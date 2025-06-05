@@ -397,7 +397,6 @@ import xml from '../utils/highlight/xml.min';
 import javascript from '../utils/highlight/javascript.min';
 import TypeSelect from './TypeSelect.vue';
 import mergeProps from '@form-create/utils/lib/mergeprops';
-import group from '../config/rule/group';
 
 hljs.registerLanguage('javascript', javascript);
 hljs.registerLanguage('xml', xml);
@@ -509,45 +508,45 @@ export default defineComponent({
             },
             relateOptions: [
                 {
-                    label: '等于',
+                    label: '==',
                     value: '=='
                 },
                 {
-                    label: '不等于',
+                    label: '!=',
                     value: '!='
                 },
                 {
-                    label: '包含',
+                    label: 'IN',
                     value: 'on'
                 },
                 {
-                    label: '不包含',
+                    label: 'NOT IN',
                     value: 'notOn'
                 }
             ],
             numberOptions: [
                 {
-                    label: '等于',
+                    label: '==',
                     value: '=='
                 },
                 {
-                    label: '不等于',
+                    label: '!=',
                     value: '!='
                 },
                 {
-                    label: '大于',
+                    label: '>',
                     value: '>'
                 },
                 {
-                    label: '大于等于',
+                    label: '>=',
                     value: '>='
                 },
                 {
-                    label: '小于',
+                    label: '<',
                     value: '<'
                 },
                 {
-                    label: '小于等于',
+                    label: '<=',
                     value: '<='
                 }
             ],

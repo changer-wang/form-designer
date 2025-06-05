@@ -38,6 +38,7 @@ node_modules/
 jspm_packages/
 .DS_Store
 dist
+/locale
 
 # TypeScript v1 declaration files
 typings/
@@ -67,4 +68,3 @@ typings/
 # custom
 yarn.lock
 /index.html
-/locale
